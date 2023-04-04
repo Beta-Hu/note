@@ -306,6 +306,10 @@
 		private UserServiceApi service; // UserServiceApi存在两个实现类UserService和UserService2
 		```
 - @Resource注入(依赖jakarta.annotation)
+	- 匹配顺序
+		- 优先byName(未指明name时以属性名作为name)
+		- 无法匹配name时，自动byType来装配
 	- 属性注入
 		```java
+		
 		```
