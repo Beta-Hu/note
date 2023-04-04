@@ -1,4 +1,4 @@
-#IoC容器
+# IoC容器
 - Spring通过IoC容器来管理
 - 功能
 	- 所有Java对象的实例化和初始化
@@ -18,7 +18,7 @@
 # 基于xml管理Bean
 - 定义Bean 
 	在bean.xml下添加</br>
-	```
+	```xml
 	<bean id="user" class="indi.beta.spring6.iocxml.User"/>
 	```
 - 获取Bean
@@ -37,7 +37,7 @@
 - 依赖注入(Dependency Injection)
 	- 基于setter
 		- 通过bean.xml下的bean下的property注入</br>
-			```
+			```xml
 			<bean id="user1" class="indi.beta.spring6.iocxml.User">
 		        <property name="age" value="15"/>
 		        <property name="name" value="BBB"/>
@@ -45,7 +45,7 @@
 			```
 	- 基于构造器
 		- 通过有参构造器注入</br>
-			```
+			```xml
 			<bean id="user2" class="indi.beta.spring6.iocxml.User">
 		        <constructor-arg name="age" value="64"/>
 		        <constructor-arg name="name" value="GGG"/>
@@ -53,8 +53,7 @@
 			```
 		- 会依据给定的属性名自动选择相应的构造器
 	- 使用util注入集合
-			
-		```
+		```xml
 	    <bean id="cat" class="indi.beta.spring6.iocxml.Pet">
 	        <property name="name" value="catAAA"/>
 	    </bean>
@@ -72,7 +71,7 @@
 	    </util:map>
 		```
 	- 使用p命名空间注入
-		```
+		```xml
 	    <bean id="cat" class="indi.beta.spring6.iocxml.Pet">
 	        <property name="name" value="catAAA"/>
 	    </bean>
@@ -90,13 +89,13 @@
 
 	- 特殊值处理
 		- 空</br>
-			```
+			```xml
 			<bean id="user1" class="iocxml.User">
 		        <null/>
 		    </bean>
 			```
 		- CDATA节(用于处理xml冲突的字符)</br>
-			```
+			```xml
 			<bean id="user1" class="iocxml.User">
 		        <property name="age">
 					<value><![CDATA[xx]]></value>
@@ -105,7 +104,7 @@
 			```
 		- 对象
 			- 引用外部Bean</br>
-			```
+			```xml
 		    <bean id="pet" class="indi.beta.spring6.iocxml.Pet">
 		        <property name="name" value="catAA"/>
 		    </bean>
@@ -116,7 +115,7 @@
 			```
 				- 需要先创建需要被引用的bean，然后是哟个**ref**而非value来引用
 			- 内部Bean
-			```
+			```xml
 	        <bean id="user" class="indi.beta.spring6.iocxml.User">
 		        <property name="pet">
 		            <bean id="pet" class="indi.beta.spring6.iocxml.Pet">
@@ -126,8 +125,8 @@
 		    </bean>
 			```
 			- 级联赋值</br>
-			```
-            <bean id="pet" class="indi.beta.spring6.iocxml.Pet">
+			```xml
+            		<bean id="pet" class="indi.beta.spring6.iocxml.Pet">
 		    </bean>
 		
 		    <bean id="user" class="indi.beta.spring6.iocxml.User">
@@ -138,7 +137,7 @@
 				- 需要在外部bean的基础上实现。实际就是对外部bean的属性的赋值
 
 		- 数组</br>
-			```
+			```xml
 		    <bean id="user" class="indi.beta.spring6.iocxml.User">
 		        <property name="hobbit">
 		            <array>
@@ -150,29 +149,65 @@
 		    </bean>
 			```
 		- 集合</br>
-			```
+		```xml
 		    <bean id="user" class="indi.beta.spring6.iocxml.User">
-		        <property name="hobbit">
-		            <list>
-		                <value>dsadsa</value>
-		                <value>daewq</value>
-		                <value>yiukj</value>
-		            </list>
-		        </property>
+			<property name="hobbit">
+			    <list>
+				<value>dsadsa</value>
+				<value>daewq</value>
+				<value>yiukj</value>
+			    </list>
+			</property>
 		    </bean>
 			```
 			```
 		    <bean id="user" class="indi.beta.spring6.iocxml.User">
-		        <property name="debt">
-		            <map>
-		                <entry>
-		                    <key>
-		                        <value>key 1</value>
-		                    </key>
-		                    <value>value 1</value>
-		                </entry>
-		            </map>
-		        </property>
+			<property name="debt">
+			    <map>
+				<entry>
+				    <key>
+					<value>key 1</value>
+				    </key>
+				    <value>value 1</value>
+				</entry>
+			    </map>
+			</property>
 		    </bean>
-			```
+		```
 - 引入外部属性文件
+	- 引入数据库依赖
+	```xml
+      <dependency>
+	  <groupId>com.mysql</groupId>
+	  <artifactId>mysql-connector-j</artifactId>
+	  <version>8.0.32</version>
+      </dependency>
+      <!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
+      <dependency>
+	  <groupId>com.alibaba</groupId>
+	  <artifactId>druid</artifactId>
+	  <version>1.0.31</version>
+      </dependency>
+	```
+	- 创建外部属性文件
+	```xml
+	<context:property-placeholder location="jdbc.properties"/>
+	```
+	- 创建spring配置文件，引入context命名空间
+	```xml
+	    <bean id="druidDataSource" class="com.alibaba.druid.pool.DruidDataSource">
+		<property name="url" value="${url}"/>
+		<property name="driverClassName" value="${driverClassName}"/>
+		<property name="username" value="${username}"/>
+		<property name="password" value="${password}"/>
+	    </bean>
+	```
+	- 引入属性文件，使用表达式完成注入
+	- *测试*
+	```java
+	public void createDruidDataSourceByXml() throws Exception{
+		ApplicationContext context = new ClassPathXmlApplicationContext("bean-jdbc.xml");
+		DruidDataSource dataSource = (DruidDataSource) context.getBean(DruidDataSource.class);
+		System.out.println("get connection " + dataSource.getConnection());
+	    }
+	```
