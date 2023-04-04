@@ -236,3 +236,7 @@
 	- 通过bean的destroy-method指定，属性值不含括号
 	- 通过context.close()执行，context销毁前将会执行对象的destroyMethod
 - IoC关闭
+
+# FactoryBean
+- FactoryBean是一个泛型接口
+- 通过实现类的getObject()来确定实例的类
