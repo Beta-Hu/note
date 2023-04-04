@@ -211,32 +211,47 @@
 		System.out.println("get connection " + dataSource.getConnection());
 	    }
 	```
-# Bean的作用域
-- 单实例与多实例: scope
+- xml Bean的作用域: scope
 	- 单实例(scope="singleton", 默认的)
 	```xml
-    	 <bean id="user-singleton" class="indi.beta.spring6.iocxml.User" scope="singleton"/>
+	 <bean id="user-singleton" class="indi.beta.spring6.iocxml.User" scope="singleton"/>
 	 ```
-	 	- 在IoC初始化时创建
+		- 在IoC初始化时创建
 	 - 多实例(scope="prototype")
 	 ```xml
-   	 <bean id="user-prototype" class="indi.beta.spring6.iocxml.User" scope="prototype"/>
+	 <bean id="user-prototype" class="indi.beta.spring6.iocxml.User" scope="prototype"/>
 	```
 		- 在获取Bean时创建
 
-# Bean的生命周期
-- Bean对象创建(调用无参构造器)
-- Bean属性注入
-- Bean后置处理器(初始化前的。随context一起，并非对单个bean执行)
-- Bean对象初始化
-	- 通过bean的init-method指定，属性值不含括号
-- Bean后置处理器(初始化后的。随context一起，并非对单个bean执行)
-- Bean创建完成
-- Bean对象销毁
-	- 通过bean的destroy-method指定，属性值不含括号
-	- 通过context.close()执行，context销毁前将会执行对象的destroyMethod
-- IoC关闭
+- xml Bean的生命周期
+	- Bean对象创建(调用无参构造器)
+	- Bean属性注入
+	- Bean后置处理器(初始化前的。随context一起，并非对单个bean执行)
+	- Bean对象初始化
+		- 通过bean的init-method指定，属性值不含括号
+	- Bean后置处理器(初始化后的。随context一起，并非对单个bean执行)
+	- Bean创建完成
+	- Bean对象销毁
+		- 通过bean的destroy-method指定，属性值不含括号
+		- 通过context.close()执行，context销毁前将会执行对象的destroyMethod
+	- IoC关闭
 
-# FactoryBean
-- FactoryBean是一个泛型接口
-- 通过实现类的getObject()来确定实例的类
+- FactoryBean
+	- FactoryBean是一个泛型接口
+	- 通过实现类的getObject()来确定实例的类
+
+- 基于xml自动装配
+	- 意义
+		- 当不同类按层次引用时，可以使用自动装配来简化对属性的赋值
+	- 操作
+		- 在controller层定义service的属性和setter
+		- 在service层定义dao的属性和setter
+		- 配置自动装配
+			- 创建bean并配置autowire
+				```xml
+				<bean id="controller" class="indi.beta.spring6.autocontroller.controller.UserController" autowire="byType"/>
+				<bean id="service" class="indi.beta.spring6.autocontroller.service.UserService" autowire="byType"/>
+				<bean id="dao" class="indi.beta.spring6.autocontroller.dao.UserDAO"/>
+				```
+
+# 基于注解管理Bean
