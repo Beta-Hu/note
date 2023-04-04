@@ -211,3 +211,25 @@
 		System.out.println("get connection " + dataSource.getConnection());
 	    }
 	```
+# Bean的作用域
+- 单实例与多实例: scope
+	- 单实例(scope="singleton", 默认的)
+	```xml
+    	 <bean id="user-singleton" class="indi.beta.spring6.iocxml.User" scope="singleton"/>
+	 ```
+	 	- 在IoC初始化时创建
+	 - 多实例(scope="prototype")
+	 ```xml
+   	 <bean id="user-prototype" class="indi.beta.spring6.iocxml.User" scope="prototype"/>
+	```
+		- 在获取Bean时创建
+
+# Bean的生命周期
+- Bean对象创建(调用无参构造器)
+- Bean属性注入
+- Bean后置处理器(初始化前的)
+- Bean对象初始化
+- Bean后置处理器(初始化后的)
+- Bean创建完成
+- Bean对象销毁
+- IoC关闭
