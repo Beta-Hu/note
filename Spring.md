@@ -309,7 +309,41 @@
 	- 匹配顺序
 		- 优先byName(未指明name时以属性名作为name)
 		- 无法匹配name时，自动byType来装配
-	- 属性注入
-		```java
-		
-		```
+	- **只能作用在属性和setter上**
+	- 注入
+		- 依据指定名称注入
+			```java
+			// 将被装配类添加注解指定名称
+			@Service("myUserService")
+			public class UserService{}
+			```
+			```java
+			// 指定名称进行装配
+			@Resource(name="myUserService")
+			private UserServiceApi service;
+			```
+		- 依据属性名称注入(需要保证对象名与被装配类指定名称相同)
+			```java
+			@Service("myUserService")
+			public class UserService{}
+			```
+			```java
+			@Resource
+			private UserServiceApi myUserService;
+			```
+		- 以上两种情况都无法满足时，依据类型进行注入
+
+	- 全注解开发(完全脱离spring的xml配置文件)
+		- 创建配置类
+			```java
+			@Configuration // 声明是配置类
+			@ComponentScan("indi.beta") // 开启组件扫描
+			public class SpringConfig {}
+			```
+		- 加载配置类
+			```java
+			ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
+			// 替换了 ApplicationContext context = new ClassPathXmlApplicationContext("bean.xml");
+        		UserController controller = (UserController) context.getBean(UserController.class);
+        		controller.getUserService().add();
+			```
