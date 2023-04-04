@@ -255,3 +255,45 @@
 				```
 
 # 基于注解管理Bean
+- 开启注解扫描
+	```xml
+	<context:component-scan base-package="indi.beta.spring6"/>
+	```
+	- 开启后会扫描包组件中的注解
+- 通过注解创建对象
+	```java
+	@Component(value="user")
+	public class User {}
+	```
+	- 括号内可以省略，此时对象名为首字母小写的类名
+	- 可用的注解类型
+		- Component: 用于任意层的对象
+		- Respository: 用于DAO层的对象
+		- Service: 用于服务层的对象
+		- Controlled: 用于控制层的对象
+- @Autowired注入
+	- 属性注入(自动依据类型注入)
+		```java
+	    	@Autowired
+		private UserService userService;
+		```
+	- 方法注入(使用setter依据类型注入)
+		```java
+	    	@Autowired
+		public void setUserDAO(UserDAO userDAO) {
+			this.userDAO = userDAO;
+	    	}
+		```
+	- 构造器注入
+		```java
+	    	@Autowired
+    		public UserController(UserService userService){
+        		this.userService = userService;
+    		}	
+		```
+		- 也可以在形参注入
+			```java
+			public UserController(@Autowired UserService userService){
+				this.userService = userService;
+			}
+			```
