@@ -227,9 +227,12 @@
 # Bean的生命周期
 - Bean对象创建(调用无参构造器)
 - Bean属性注入
-- Bean后置处理器(初始化前的)
+- Bean后置处理器(初始化前的。随context一起，并非对单个bean执行)
 - Bean对象初始化
-- Bean后置处理器(初始化后的)
+	- 通过bean的init-method指定，属性值不含括号
+- Bean后置处理器(初始化后的。随context一起，并非对单个bean执行)
 - Bean创建完成
 - Bean对象销毁
+	- 通过bean的destroy-method指定，属性值不含括号
+	- 通过context.close()执行，context销毁前将会执行对象的destroyMethod
 - IoC关闭
