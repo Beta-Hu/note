@@ -271,7 +271,7 @@
 		- Respository: 用于DAO层的对象
 		- Service: 用于服务层的对象
 		- Controlled: 用于控制层的对象
-- @Autowired注入
+- @Autowired注入(默认依据类型)
 	- 属性注入(自动依据类型注入)
 		```java
 	    	@Autowired
@@ -297,3 +297,15 @@
 				this.userService = userService;
 			}
 			```
+		- 仅有一个有参构造器且没有无参构造器时，注解可以省略
+	- Autowired与Qualifier注解联合
+		- 由于autowired是基于类型的，当有多个实现类时注入会失败，此时需要qualifier指定具体的实现类
+		```java
+		@Autowired
+		@Qualifier(value = "userService")
+		private UserServiceApi service; // UserServiceApi存在两个实现类UserService和UserService2
+		```
+- @Resource注入(依赖jakarta.annotation)
+	- 属性注入
+		```java
+		```
