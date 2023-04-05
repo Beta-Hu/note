@@ -338,6 +338,7 @@
 			```java
 			@Configuration // 声明是配置类
 			@ComponentScan("indi.beta") // 开启组件扫描
+			@Scope("singleton") // 声明是单例
 			public class SpringConfig {}
 			```
 		- 加载配置类
@@ -347,3 +348,21 @@
         		UserController controller = (UserController) context.getBean(UserController.class);
         		controller.getUserService().add();
 			```
+# 原理探究: 手写IoC
+
+# AOP: 面向切片编程
+- 代理模式: 通过代理类来间接调用方法,将业务逻辑代码与非业务逻辑代码解耦
+	- 静态代理 
+	```java
+	public class CalculatorStaticProxy implements CalculatorApi{
+		private Calculator calculator;  //被代理的类
+
+		@Override
+		public int add(int a, int b) {
+			int result = calculator.add(a, b);  // 被代理类业务逻辑的方法
+			System.out.println("[log]...");	// 非业务逻辑
+			return result;
+		}
+   	 }
+	```
+	- 动态代理
