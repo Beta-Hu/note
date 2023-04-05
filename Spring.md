@@ -365,4 +365,30 @@
 		}
    	 }
 	```
-	- 动态代理
+	- 动态代理(实际就是使用反射提高了扩展性)
+	```java
+	// 创建代理类工厂
+	public class ProxyFactory {
+	    private Object target;
+
+	    public ProxyFactory(Object target) {
+		this.target = target;
+	    }
+
+	    public Object getProxy() {
+		ClassLoader loader = target.getClass().getClassLoader();
+		Class<?>[] interfaces = target.getClass().getInterfaces();
+		InvocationHandler handler = (proxy, method, args) -> {
+		    System.out.println("[log]...");	// 非业务逻辑
+		    return (Object) method.invoke(target, args);	// 业务逻辑
+		};
+		return Proxy.newProxyInstance(loader, interfaces, handler);
+	    }
+	}
+	```
+	```java
+	// 测试动态代理
+	ProxyFactory proxyFactory = new ProxyFactory(new Calculator());
+        CalculatorApi proxy = (CalculatorApi) proxyFactory.getProxy();
+        proxy.add(1, 5);
+	```
