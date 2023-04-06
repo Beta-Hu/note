@@ -469,3 +469,14 @@
 					- 权限和返回类型可以使用*代替，表示为任意类型任意权限
 					- 方法名可以使用*表示任意方法，也可以用作通配符进行筛选
 					- 全类名可以使用*号表示任意类，*...表明任意包深度的任意类
+		- 重用切入点
+		```java
+		// 声明切入点
+	    	@Pointcut("execution(public int indi.beta.aop.AOPCalculator.*(..))")
+    		public void putMethod(){}
+		// 利用切入点方法代替。如果不在一个包下，则需要提供切入点方法全类名
+    		@Before(value = "putMethod()")
+    		public void beforeMethod(JoinPoint joinPoint){
+        		System.out.println("[log] before method @" + joinPoint.getSignature().getName());
+    		}
+		```
