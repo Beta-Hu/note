@@ -409,4 +409,63 @@
 		- 简化代码: 将重复代码抽取出来，提升内聚
 		- 代码增强: 将特定功能封装到切面类，被套用切面逻辑的方法就被切面增强了(例如动态代理为计算器的方法增加了日志功能)
 	- 步骤分析
-		- 
+		- 导入依赖
+			- rog.springframework.spring-aop 
+			- rog.springframework.spring-aspects
+		- 建立切片类
+		```java
+		@Aspect // 声明为切片类
+		@Component  // 声明为ioc容器
+		public class LogAspect{
+		    // 通知类型
+		    @Before(value = "execution(public int indi.beta.aop.AOPCalculator.add(..))")
+		    public void beforeMethod(){
+			System.out.println("[log] before add...");	// 增强的操作
+		    }
+		}
+		```
+		```java
+		public class AOPTest {
+	    	@Test
+	    	public void test(){
+			ApplicationContext context = new ClassPathXmlApplicationContext("bean.xml");
+			AOPCalculatorApi bean = context.getBean(AOPCalculatorApi.class);	// 一定要用那傻逼的接口类，而非实现类
+			bean.add(15, 3);
+	   		}
+		}
+		```
+			- 通知类型
+			```java
+			    @Before(value = "execution(public int indi.beta.aop.AOPCalculator.*(..))")
+			 	public void beforeMethod(JoinPoint joinPoint){
+				System.out.println("[log] before method @" + joinPoint.getSignature().getName());
+			    }
+
+			    @After(value = "execution(public int indi.beta.aop.AOPCalculator.*(..))")
+			    public void afterMethod(JoinPoint joinPoint){
+				System.out.println("[log] after method @" + joinPoint.getSignature().getName());
+			    }
+
+			    @AfterReturning(value = "execution(public int indi.beta.aop.AOPCalculator.*(..))", returning = "returnValue")
+			    public void returnMethod(JoinPoint joinPoint, Object returnValue){
+				System.out.println("[log] return method @" + joinPoint.getSignature().getName());
+				System.out.println("[return] result " + returnValue);
+			    }
+
+			    @AfterThrowing(value = "execution(public int indi.beta.aop.AOPCalculator.*(..))", throwing = "exceptionName")
+			    public void throwMethod(JoinPoint joinPoint, Throwable exceptionName){
+				System.out.println("[log] throw method @" + joinPoint.getSignature().getName());
+				System.out.println("[exception] " + exceptionName);
+			    }
+
+			    @Around(value = "execution(public int indi.beta.aop.AOPCalculator.*(..))")
+			    public Object aroundMethod(ProceedingJoinPoint joinPoint) throws Throwable {
+				System.out.println("[log] around method @" + joinPoint.getSignature().getName());
+				return joinPoint.proceed();
+			    }
+			    ```
+			- 切入表达式
+				- **execution(权限 返回类型 方法全类名.方法名(参数))**
+					- 权限和返回类型可以使用*代替，表示为任意类型任意权限
+					- 方法名可以使用*表示任意方法，也可以用作通配符进行筛选
+					- 全类名可以使用*号表示任意类，*...表明任意包深度的任意类
