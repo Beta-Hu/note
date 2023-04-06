@@ -480,3 +480,16 @@
         		System.out.println("[log] before method @" + joinPoint.getSignature().getName());
     		}
 		```
+	- 基于xml的aop
+	```xml
+	    <aop:config>
+		<aop:aspect ref="logAspect">
+		    <aop:pointcut id="pointCut" expression="execution(public int indi.beta.aop.AOPCalculator.*(..))"/>
+		    <aop:before method="beforeMethod" pointcut-ref="pointCut"/>
+		    <aop:after method="afterMethod" pointcut-ref="pointCut"/>
+		    <aop:after-returning method="returnMethod" pointcut-ref="pointCut" returning="returnValue"/>
+		    <aop:after-throwing method="throwMethod" pointcut-ref="pointCut" throwing="exceptionName"/>
+		    <aop:around method="aroundMethod" pointcut-ref="pointCut"/>
+		</aop:aspect>
+	    </aop:config>
+	```
