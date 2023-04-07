@@ -604,9 +604,9 @@ public class UserTest {
 - 事务: Transactional
 	- 全注解实现事务
 	```java
-	@Configuration
-	@ComponentScan("indi.beta.bank")
-	@EnableTransactionManagement
+	@Configuration	// 声明为配置类
+	@ComponentScan("indi.beta.bank")	// 开启自动扫描
+	@EnableTransactionManagement	// 开启事务控制
 	public class SpringConfig {
 	    @Bean(name="dataSource")
 	    public DataSource getDataSource() throws Exception {
@@ -627,6 +627,19 @@ public class UserTest {
 		DataSourceTransactionManager manager = new DataSourceTransactionManager();
 		manager.setDataSource(dataSource);
 		return manager;
+	    }
+	}
+	```
+	```java
+	@Service
+	public class BankService implements BankServiceApi{
+	    @Autowired
+	    private BankDAOApi bankDAO;
+		
+	    @Transactional	// 将服务声明为事务，满足其ACID特性
+	    public void transfer(int targetId, int sourceId, int balance){
+		bankDAO.updateBalance(sourceId, balance);
+		bankDAO.updateBalance(targetId, -balance);
 	    }
 	}
 	```
