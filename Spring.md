@@ -602,7 +602,7 @@ public class UserTest {
 		}
 		```
 - 事务: Transactional
-	- 全注解实现事务
+	- 全注解实现事务(可以使用普通测试类测试，无需添加@SpringJUnitConfig注解)
 	```java
 	@Configuration	// 声明为配置类
 	@ComponentScan("indi.beta.bank")	// 开启自动扫描
