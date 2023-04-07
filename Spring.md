@@ -35,6 +35,12 @@
 	- 如果bean.xml定义的bean的class是接口，且当该接口有多个实现类的时候，不能使用class来获取
 
 - 依赖注入(Dependency Injection)
+	- **### 注意 ### 傻逼自动注入的对象只能是抽象类型的**
+	- **### 注意 ### 傻逼自动注入的对象只能是抽象类型的**
+	- **### 注意 ### 傻逼自动注入的对象只能是抽象类型的**
+	- **### 注意 ### 傻逼自动注入的对象只能是抽象类型的**
+	- **### 注意 ### 傻逼自动注入的对象只能是抽象类型的**
+	- **### 注意 ### 傻逼自动注入的对象只能是抽象类型的**
 	- 基于setter
 		- 通过bean.xml下的bean下的property注入</br>
 			```xml
@@ -492,4 +498,135 @@
 		    <aop:around method="aroundMethod" pointcut-ref="pointCut"/>
 		</aop:aspect>
 	    </aop:config>
+	```
+
+# Spring整合JUnit
+```xml
+<!--开启自动扫描-->
+<context:component-scan base-package="indi.beta.jdbc"/>
+```
+``java
+// 测试类只能由空参构造器
+import org.junit.jupiter.api.Test;  // 使用JUnit5而非JUnit4 (import org.junit.Test;)
+@SpringJUnitConfig(locations = "classpath:bean.xml")
+public class UserTest {
+    @Autowired
+    private User user;
+
+    @Test
+    public void test(){
+        user.run();
+    }
+}
+```
+
+# 使用Spring完成CRUD
+- 定义bean
+```xml
+<context:property-placeholder location="classpath:spring-jdbc.properties" system-properties-mode="NEVER"/>
+
+<bean id="druidDataSource" class="com.alibaba.druid.pool.DruidDataSource">
+<property name="url" value="${url}"/>
+<property name="driverClassName" value="${driverClassName}"/>
+<property name="username" value="${username}"/>
+<property name="password" value="${password}"/>
+</bean>
+
+<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+<property name="dataSource" ref="druidDataSource"/>
+</bean>
+```
+- 装配并实现CRUD
+	- 增、删、改(差别仅在sql语句不同)
+		```java
+		@SpringJUnitConfig(locations = "classpath:bean-jdbc.xml")
+		public class JDBCTest {
+		    @Autowired
+		    private JdbcTemplate jdbcTemplate;
+
+		    @Test
+		    public void update(){
+			String sql = "INSERT INTO t_table (id, name) VALUES(?, ?)";
+			int row = jdbcTemplate.update(sql, 15, "Nidd");
+			System.out.println("finish!");
+		    }
+		}
+		```
+	- 查
+		```java
+		@SpringJUnitConfig(locations = "classpath:bean-jdbc.xml")
+		public class JDBCTest {
+		    @Autowired
+		    private JdbcTemplate jdbcTemplate;
+
+		    // 定义一个内部类
+		    static class MyUser{
+			public int id;
+			public String name;
+
+			// setter必不可少，否则查询结果由于无法赋值而全为null
+			public void setId(int id) {
+			    this.id = id;
+			}
+
+			public void setName(String name) {
+			    this.name = name;
+			}
+		    }
+
+		    @Test
+		    public void select(){
+			String sql = "SELECT * FROM t_table WHERE id=?";
+			// 自行封装
+		//        User userResult = jdbcTemplate.queryForObject(sql, (resultSet, rowIndex)->{
+		//            User user = new User();
+		//            user.id = resultSet.getInt("id");
+		//            user.name = resultSet.getString("name");
+		//            return user;
+		//        }, 14);
+			// 使用预定义接口实现类
+			MyUser userResult = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(MyUser.class), 24);
+
+			System.out.println(userResult.id + userResult.name);
+		    }
+
+		    @Test
+		    public void selectList(){
+			String sql = "SELECT * FROM t_table";
+			List<MyUser> myUsers = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(MyUser.class));
+
+			for (MyUser user : myUsers) {
+			    System.out.println("id: " + user.id + "  name: " + user.name);
+			}
+		    }
+		}
+		```
+- 事务: Transactional
+	- 全注解实现事务
+	```java
+	@Configuration
+	@ComponentScan("indi.beta.bank")
+	@EnableTransactionManagement
+	public class SpringConfig {
+	    @Bean(name="dataSource")
+	    public DataSource getDataSource() throws Exception {
+		Properties prop = new Properties();
+		prop.load(SpringConfig.class.getClassLoader().getResourceAsStream("spring-jdbc.properties"));
+		return DruidDataSourceFactory.createDataSource(prop);
+	    }
+
+	    @Bean(name="jdbcTemplate")
+	    public JdbcTemplate getTemplate(DataSource dataSource){
+		JdbcTemplate jdbcTemplate = new JdbcTemplate();
+		jdbcTemplate.setDataSource(dataSource);
+		return jdbcTemplate;
+	    }
+
+	    @Bean(name="transactionManager")
+	    public TransactionManager getTransactionManager(DataSource dataSource){
+		DataSourceTransactionManager manager = new DataSourceTransactionManager();
+		manager.setDataSource(dataSource);
+		return manager;
+	    }
+	}
 	```
