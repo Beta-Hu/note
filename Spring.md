@@ -643,3 +643,15 @@ public class UserTest {
 	    }
 	}
 	```
+# 国际化
+- Java国际化
+	- 依据规范命名的配置文件可以被Locale读取
+		```java
+		ResourceBundle bundle = ResourceBundle.getBundle("message", new Locale("zh", "CN"));
+		System.out.println(bundle.getString("region"));
+		```
+	- 配置文件名称为: baseName_language_country.properties。例如message_zh_CN.properties
+- Spring国际化
+
+# 数据校验
+- 
