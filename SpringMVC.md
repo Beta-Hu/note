@@ -41,4 +41,12 @@
     
 # SpringMVC获取请求参数
 - 通过ServletApi获取
-  - 
+  ```java
+    @RequestMapping("/testServletApi")
+    public String testServletApi(HttpServletRequest request){
+        String name = request.getParameter("name");
+        String password = request.getParameter("password");
+        System.out.println("nane: " + name + ", password: " + password);
+        return "hello";
+    }
+  ```
