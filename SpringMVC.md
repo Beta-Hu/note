@@ -46,7 +46,16 @@
     public String testServletApi(HttpServletRequest request){
         String name = request.getParameter("name");
         String password = request.getParameter("password");
-        System.out.println("nane: " + name + ", password: " + password);
+        System.out.println("name: " + name + ", password: " + password);
+        return "hello";
+    }
+  ```
+- 通过控制器形参的方式获取
+  ```java
+    // 形参名与请求属性名一致即可获取
+    @RequestMapping("/getParamByController")
+    public String getParamByController(String name, String password){
+        System.out.println("name: " + name + ", password: " + password);
         return "hello";
     }
   ```
