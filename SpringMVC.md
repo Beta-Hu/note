@@ -10,3 +10,12 @@
     - GET与POST的区别
       - GET: 在地址后追加键值对。不安全。快速。容量小。不适用文件传输
       - POST: 使用单独的请求体。安全。低效。容量大。可用于文件传输。
+    - _如果使用了put或delete，则默认按照GET处理_
+- params
+  - String[], 可选
+  - 依据请求的参数匹配请求映射(**全部满足**)
+  - 表达式形式
+    - "param": 要求请求必须含有参数param
+    - "!param": 要求请求必须不含参数param
+    - "param=value": 要求必须含有参数param，且要求请求的参数param必须为value
+    - "param!=value": 要求必须含有参数param，且要求请求的参数param必须不为value
