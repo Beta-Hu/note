@@ -13,9 +13,13 @@
     - _如果使用了put或delete，则默认按照GET处理_
 - params
   - String[], 可选
-  - 依据请求的参数匹配请求映射(**全部满足**)
+  - 在依据路径匹配后依据请求的参数匹配请求映射(**全部满足**)
   - 表达式形式
     - "param": 要求请求必须含有参数param
     - "!param": 要求请求必须不含参数param
     - "param=value": 要求必须含有参数param，且要求请求的参数param必须为value
     - "param!=value": 要求必须含有参数param，且要求请求的参数param必须不为value
+- headers
+  - String[], 可选
+  - 在依据路径匹配后依据请求头进行匹配
+  - 表达式类型(与params相同)
