@@ -59,3 +59,13 @@
         return "hello";
     }
   ```
+- POJO: 请求参数与类属性名称一致的实体类,旨在解决请求参数过多的问题
+  - 必须要求参数与类属性名称一致
+  ```java
+  @RequestMapping("/")
+  public String testPOJO(User user){
+    System.out.println(user);
+    return "success";
+  }
+  ```
+  - 可以使用多个形参，但这往往没有意义
