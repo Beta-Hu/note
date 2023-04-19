@@ -114,7 +114,7 @@
       return "success";
   }
   ```
-- 向session共享数据
+- 向session域共享数据
   - 使用原生servletApi
   ```java
   @RequestMapping("/testSession")
@@ -123,4 +123,14 @@
       return "success";
   }
   // 注意: thymeleaf获取session属性需要使用"session."来指明范围，例如th:attr_name="${session.xxx}"
+  ```
+- 向application域共享数据
+  - 使用原生servletApi
+  ```java
+  @RequestMapping("/testApplication")
+  public String testApplication(HttpSession session){
+      ServletContext context = session.getServletContext(); // 通过session获取application
+      context.setAttribute("textContext", "Hello testApplication!");
+      return "success";
+  }
   ```
