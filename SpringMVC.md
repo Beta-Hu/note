@@ -71,30 +71,56 @@
   - 可以使用多个形参，但这往往没有意义
 
 # 域对象共享数据
-- 使用原生servletAPI
-```java
-@RequestMapping("/testRequestByServletApi")
-public String testRequestByServletApi(HttpServletRequest request){
-    request.setAttribute("textContext", "Hello Success!");
-    return "success";
-}
-```
-- 通过ModelAndView
-```java
-@RequestMapping("/testModelAndView")
-public ModelAndView testModelAndView(){
-    ModelAndView mov = new ModelAndView();
-    mov.addObject("textContext", "Hello testModelAndView!");  // 设置请求域属性
-    mov.setViewName("success");   // 设置视图名称
-    return mov;   // 返回ModelAndView对象，而非之前方法返回的视图名称
-}
-```
-- 通过Model
-```java
-@RequestMapping("/testModel")
-// 传入模型，返回视图名称
-public String testModel(Model model){
-    model.addAttribute("textContext", "Hello testModel!");
-    return "success";
-}
-```
+- 向请求域共享数据
+  - 使用原生servletAPI
+  ```java
+  @RequestMapping("/testRequestByServletApi")
+  public String testRequestByServletApi(HttpServletRequest request){
+      request.setAttribute("textContext", "Hello Success!");
+      return "success";
+  }
+  ```
+  - 通过ModelAndView(推荐的方式)
+  ```java
+  @RequestMapping("/testModelAndView")
+  public ModelAndView testModelAndView(){
+      ModelAndView mov = new ModelAndView();
+      mov.addObject("textContext", "Hello testModelAndView!");  // 设置请求域属性
+      mov.setViewName("success");   // 设置视图名称
+      return mov;   // 返回ModelAndView对象，而非之前方法返回的视图名称
+  }
+  ```
+  - 通过Model
+  ```java
+  @RequestMapping("/testModel")
+  // 传入模型，返回视图名称
+  public String testModel(Model model){
+      model.addAttribute("textContext", "Hello testModel!");
+      return "success";
+  }
+  ```
+  - 通过Map集合
+  ```java
+  @RequestMapping("/testMap")
+  public String testMap(Map<String, Object> map){
+      map.put("textContext", "Hello testMap!");
+      return "success";
+  }
+  - 通过ModelMap
+  ```java
+  @RequestMapping("/testModelMap")
+  public String testModelMap(ModelMap modelmap){
+      modelmap.addAttribute("textContext", "Hello testModelMap!");
+      return "success";
+  }
+  ```
+- 向session共享数据
+  - 使用原生servletApi
+  ```java
+  @RequestMapping("/testSession")
+  public String testSession(HttpSession session){
+      session.setAttribute("textContext", "Hello testSession!");
+      return "success";
+  }
+  // 注意: thymeleaf获取session属性需要使用"session."来指明范围，例如th:attr_name="${session.xxx}"
+  ```
