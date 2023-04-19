@@ -134,3 +134,71 @@
       return "success";
   }
   ```
+
+# 视图
+- 分类: 转发视图、重定向视图
+- Thymeleaf视图: 不含视图前缀时的默认视图类型
+- 转发视图(控制器方法设置的视图名以forward:开头): InternalResourceView
+ ```java
+  @RequestMapping("/testForward")
+  public String testForward(){
+      return "forward:/testThymeleafView";
+  }
+  ```
+- 重定向视图(控制器方法设置的视图名以redirect:开头): RedirectView
+  ```java
+  @RequestMapping("/testRedirect")
+  public String testRedirect(){
+      return "redirect:/testThymeleafView";
+  }
+  ```
+- 视图控制器view-controller
+  - 存在于servlet配置文件中，path控制路径，view-name控制资源
+  ```xml
+  <!-- xmlns:mvc="http://www.springframework.org/schema/mvc" -->
+  <mvc:view-controller path="/" view-name="portal"/>
+  <!-- 开启注解驱动，启用控制器中的请求映射。否则会出现404错误 -->
+  <mvc:annotation-driven/>
+  ```
+  - 一般仅用于实现页面跳转
+
+# RESTFul
+- 提倡url使用统一的风格设计，从前向后使用斜杠分割，不使用问号和键值对方式携带请求参数
+  ```java
+  @Controller
+  public class UserController {
+      @RequestMapping(value = "/user", method = RequestMethod.GET)
+      public String getUsers(){return "test_rest";}
+
+      @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
+      public String getUserById(){return "test_rest";}
+
+      @RequestMapping(value = "/user", method = RequestMethod.POST)
+      public String setUser(){return "test_rest";}
+
+      @RequestMapping(value = "/user", method = RequestMethod.PUT)
+      public String modifyUser(){return "test_rest";}
+  }
+  ```
+  ```html
+  <a th:href="@{/user}">getUsers</a><br/>
+  <a th:href="@{/user/1}">getUserById</a><br/>
+  <form th:action="@{/user}" method="post">
+      <input type="submit" value="submit"><br/>
+  </form>
+  <form th:action="@{/user}" method="post">
+      <input type="hidden" name="_method" value="put">
+      <input type="submit" value="submit"><br/>
+  </form>
+  ```
+  ```xml
+  <!-- 使用PUT和DELETE请求时，必须先在web.xml配置过滤器，然后使用<input type="hidden" name="_method" value="put">携带请求方式 -->
+  <filter>
+      <filter-name>HiddenHttpMethodFilter</filter-name>
+      <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+  </filter>
+  <filter-mapping>
+      <filter-name>HiddenHttpMethodFilter</filter-name>
+      <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  ```
