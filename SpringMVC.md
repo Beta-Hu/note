@@ -69,3 +69,32 @@
   }
   ```
   - 可以使用多个形参，但这往往没有意义
+
+# 域对象共享数据
+- 使用原生servletAPI
+```java
+@RequestMapping("/testRequestByServletApi")
+public String testRequestByServletApi(HttpServletRequest request){
+    request.setAttribute("textContext", "Hello Success!");
+    return "success";
+}
+```
+- 通过ModelAndView
+```java
+@RequestMapping("/testModelAndView")
+public ModelAndView testModelAndView(){
+    ModelAndView mov = new ModelAndView();
+    mov.addObject("textContext", "Hello testModelAndView!");  // 设置请求域属性
+    mov.setViewName("success");   // 设置视图名称
+    return mov;   // 返回ModelAndView对象，而非之前方法返回的视图名称
+}
+```
+- 通过Model
+```java
+@RequestMapping("/testModel")
+// 传入模型，返回视图名称
+public String testModel(Model model){
+    model.addAttribute("textContext", "Hello testModel!");
+    return "success";
+}
+```
