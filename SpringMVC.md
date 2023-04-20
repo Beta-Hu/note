@@ -233,3 +233,73 @@
         return "response success";
     }
   ```
+  - 通过将java对象转换为json数组可以实现向服务器返回"对象"，其具体步骤为
+    - 添加jackson依赖
+    ```xml
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.12.1</version>
+        </dependency>
+    ```
+    - 开启mvc注解驱动。此时HandlerAdaptor中会自动装配消息转换器将java对象转换为json字符串
+    ```xml
+        <mvc: annotation-driven/>
+    ```
+    - 向控制器方法添加@ResponseBody注解，此控制器方法的返回值为特定的的Java类，并会自动转换为json字符串
+    - _注意: 被返回的java类的属性必须是外部可访问的，或者提供其公开的getter，否则依然会报500错误_
+- ResponseEntity
+  - 用于控制器方法返回值的类型，该控制器方法的返回值就是响应到浏览器的响应报文
+  - 实现文件下载功能
+    - 下载
+    ```java
+    @RequestMapping("/downloadFile")
+    public ResponseEntity<byte[]> downloadFile(HttpSession session){
+        // 获取servletContext对象
+        ServletContext context = session.getServletContext();
+        // 获取服务器中文件的真实路径
+        String realPath = context.getRealPath("/static/files/MathType.zip");
+
+        try (InputStream is = Files.newInputStream(Paths.get(realPath))) {
+            // 创建输入字节数组，其中is.available()为输入流的长度
+            byte[] bytes = new byte[is.available()];
+            is.read(bytes);
+            // 设置响应头信息
+            MultiValueMap<String, String> headers = new HttpHeaders();
+            // 设置下载方式及下载文件的默认名称。“attachment”: 以附件形式下载
+            headers.add("Content-Disposition", "attachment;filename=file.zip");
+            // 设置响应状态码
+            HttpStatus status = HttpStatus.OK;
+            // 创建ResponseEntity对象
+            return new ResponseEntity<>(bytes, headers, status);
+        } catch (IOException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+    ```
+    - 上传(请求方式必为post)
+      - 配置文件上传解析器(解决File类无法转换为MultipartFile的问题)
+      ```xml
+      <!-- 由于SpringMVC依据id获取bean，因此bean的id必须为multipartResolver,否则会出现控制器方法参数为null的问题(500错误) -->
+      <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+      ```
+      ```java
+      @RequestMapping("/uploadFile")
+      public String uploadFile(MultipartFile file, HttpSession session) throws IOException {
+          String fileName=  file.getOriginalFilename();
+          ServletContext context = session.getServletContext();
+          String filePath = context.getRealPath("files");
+
+          File serverFile = new File(filePath);
+          if (!serverFile.exists())
+              serverFile.mkdirs();
+
+          String fullPath = filePath + File.separator + fileName;
+          file.transferTo(new File(fullPath));
+          return "success";
+      }
+      ```
+- 处理ajax
+- @RestController
+  - 复合注解，用于标记控制器类，此时被标记的类的每个方法都自动被添加了@ResponseBody
