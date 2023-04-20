@@ -319,7 +319,7 @@
   - 需要实现HandlerInterceptor或继承HandlerInterceptorAdaptor
   - 必须在配置文件中进行配置
   - 拦截器返回false表示拦截，true表示放行
-  - 可以视作AOP的实际应用
+  - 可以视作AOP的实际应用，用于扩展控制器方法
 - 创建拦截器
   ```java
   public class MyInterceptor implements HandlerInterceptor {
@@ -351,10 +351,36 @@
   </mvc:interceptors>
   ```
 - 多个拦截器的顺序
-  - 如果搜友preHandler都返回true
+  - 如果所有preHandler都返回true
     - **preHandler按照配置顺序执行**
     - **postHandler和afterCompletion按照配置的反序执行**
   - 如果某个preHandler返回false
     - 该拦截器(因为执行了才能返回false)及之前的preHandler都会顺序执行
     - postHandler都不执行
     - 该拦截器及之前的afterCompletion都会顺序执行(比preHandler少一个)
+
+# 异常处理器
+- 基于配置的异常处理
+  ```xml
+    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="java.lang.ArithmeticException">error</prop>  <!-- 设置出现该类错误时跳转到的视图名 -->
+            </props>
+        </property>
+        <property name="exceptionAttribute" value="ex"/>    <!-- 将错误信息转发到浏览器。通过<p th:text="${ex}"/>获取 -->
+    </bean>
+  ```
+- 基于注解的异常处理
+  ```java
+  @ControllerAdvice
+  public class ExceptionController {
+      @ExceptionHandler(value = {ArithmeticException.class, NullPointerException.class})
+      public String testException(Exception exception, Model model){
+          model.addAttribute("ex", exception);  // 将错误信息转发到浏览器，通过<p th:text="${ex}"/>获取
+          return "error";   // 跳转的视图名称
+      }
+  }
+  ```
+  
+# 全注解开发SpringMVC
