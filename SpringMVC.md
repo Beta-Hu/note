@@ -279,6 +279,14 @@
     }
     ```
     - 上传(请求方式必为post)
+      - 添加依赖以启用上传功能
+      ```xml
+      <dependency>
+          <groupId>commons-fileupload</groupId>
+          <artifactId>commons-fileupload</artifactId>
+          <version>1.3.3</version>
+      </dependency>
+      ```
       - 配置文件上传解析器(解决File类无法转换为MultipartFile的问题)
       ```xml
       <!-- 由于SpringMVC依据id获取bean，因此bean的id必须为multipartResolver,否则会出现控制器方法参数为null的问题(500错误) -->
@@ -304,3 +312,40 @@
 - 处理ajax
 - @RestController
   - 复合注解，用于标记控制器类，此时被标记的类的每个方法都自动被添加了@ResponseBody
+
+# 拦截器
+- 拦截器
+  - 拦截器用于拦截控制器的执行，分别在控制器前(preHandle)、控制器后(postHandle)、视图渲染后(afterCompletion)执行
+  - 需要实现HandlerInterceptor或继承HandlerInterceptorAdaptor
+  - 必须在配置文件中进行配置
+  - 拦截器返回false表示拦截，true表示放行
+- 创建拦截器
+  ```java
+  public class MyInterceptor implements HandlerInterceptor {
+  @Override
+  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+      return HandlerInterceptor.super.preHandle(request, response, handler);
+  }
+
+  @Override
+  public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+      HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
+  }
+
+  @Override
+  public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+      HandlerInterceptor.super.afterCompletion(request, response, handler, ex);
+  }
+}
+  ```
+- 配置拦截器
+  ```xml
+  <!-- 在spring.xml中添加。每个bean对应一个拦截器。不被mvc:interceptor包围的拦截器默认对所有请求进行拦截 -->
+  <mvc:interceptors>
+      <mvc:interceptor>
+          <mvc:mapping path="/**"/>   <!-- 对所有请求进行拦截 -->
+          <mvc:exclude-mapping path="/"/>   <!-- 对根路径请求放行 -->
+          <bean class="indi.beta.demo03.interceptor.MyInterceptor"/>    <!-- 指定拦截器 -->
+      </mvc:interceptor>
+  </mvc:interceptors>
+  ```
