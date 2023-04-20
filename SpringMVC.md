@@ -202,3 +202,34 @@
       <url-pattern>/*</url-pattern>
   </filter-mapping>
   ```
+
+# 报文信息转换器: HttpMessageConverter
+- 将请求报文转为java对象，或将java对象转为响应报文
+- 获取请求体: @RequestBody
+  - 使用该注解标记控制器方法的形参，当前请求的请求体就会自动为形参赋值
+  ```java
+    @RequestMapping("/testRequestBody")
+    public String getRequestBody(@RequestBody String requestBody){
+        System.out.println(requestBody);
+        return "test_converter";
+    }
+  ```
+- 封装请求报文: RequestEntity
+  - 将控制器方法形参设置为该类型，会将请求报文自动赋值给该形参，而后通过getHeaders()和getBody()分别获取请求头和请求体信息
+  ```java
+    @RequestMapping("/testRequestEntity")
+    public String getRequestBody(RequestEntity<String> requestBody){
+        System.out.println(requestBody.getHeaders());
+        System.out.println(requestBody.getBody());
+        return "test_converter";
+    }
+  ```
+- 生成响应体: @ResponseBody
+  - 使用该注解标记的控制器方法的返回值不再是视图名称，而是响应到浏览器的内容
+  ```java
+    @RequestMapping("/testResponseBody")
+    @ResponseBody
+    public String getResponseBody(){
+        return "response success";
+    }
+  ```
