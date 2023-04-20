@@ -319,6 +319,7 @@
   - 需要实现HandlerInterceptor或继承HandlerInterceptorAdaptor
   - 必须在配置文件中进行配置
   - 拦截器返回false表示拦截，true表示放行
+  - 可以视作AOP的实际应用
 - 创建拦截器
   ```java
   public class MyInterceptor implements HandlerInterceptor {
@@ -349,3 +350,11 @@
       </mvc:interceptor>
   </mvc:interceptors>
   ```
+- 多个拦截器的顺序
+  - 如果搜友preHandler都返回true
+    - **preHandler按照配置顺序执行**
+    - **postHandler和afterCompletion按照配置的反序执行**
+  - 如果某个preHandler返回false
+    - 该拦截器(因为执行了才能返回false)及之前的preHandler都会顺序执行
+    - postHandler都不执行
+    - 该拦截器及之前的afterCompletion都会顺序执行(比preHandler少一个)
