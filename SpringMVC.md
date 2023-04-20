@@ -287,6 +287,7 @@
       ```java
       @RequestMapping("/uploadFile")
       public String uploadFile(MultipartFile file, HttpSession session) throws IOException {
+          // MultipartFile形参名应当与html中input的name属性一致，否则需要使用@RequestParam()来修饰形参，注解的value为html中input的name
           String fileName=  file.getOriginalFilename();
           ServletContext context = session.getServletContext();
           String filePath = context.getRealPath("files");
