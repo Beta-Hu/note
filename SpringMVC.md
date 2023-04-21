@@ -562,3 +562,35 @@
         </plugins>
     </build>
     ```
+# SpringMVC的执行流程
+- SpringMVC的常用组件
+  - DispatcherServlet: 前端控制器。用于统一处理请求和响应，是整个流程的控制中心，用于调用其他组件处理用户请求
+  - HandlerMapping: 处理器映射器。依据请求的url、method等信息查找控制器(Handler或Controller)
+  - Handler: 处理器。又称Controller，用于在DispatcherServlet的控制下对具体的用户请求进行处理。需要工程师进行开发
+  - HandlerAdapter: 处理器适配器。通过适配器来调用控制器方法
+  - ViewResolver: 视图解析器。进行视图解析，得到相应的视图。常用的入Thymeleaf、InternalResourceView、RedirectView
+  - View: 视图。将模型数据通过页面展示给用户
+- DispatcherServlet初始化流程
+  - FrameworkServlet创建WebApplicationContext
+  - 调用onRefresh(wac)，刷新容器
+  - 调用initStrategies(context)，初始化DispatcherServlet各个组件
+- SpringMVC运行流程
+  - 用户向服务器发送请求，请求被DispatcherServlet捕获
+  - DispatcherServlet对URL进行解析，得到请求资源标识符(URI)，并判断URI对应的映射
+    - 不存在时
+      - 判断是否配置过默认控制器(mvc:default-servlet-handler)
+        - 不存在时，报404
+        - 存在时，访问目标资源(一般是静态的)，找不到是依然报404(提示映射到DefaultServletHttpRequestHandler)
+    - 存在时
+      - 依据URI调用控制器映射器获取控制器及相关的所有配置(控制器、过滤器、拦截器)，以控制器执行链的形式返回
+      - DispatcherServlet获取控制器，分配合适的控制器适配器，获取成功则开始执行拦截器的preHandler()
+      - 提取Request的模型数据并填充到控制器方法的形参，开始执行控制器方法。一句配置，Spring将会自动完成一些工作
+        - HttpMessageConverter: 将请求消息转换为对象，将对象转换为响应信息
+        - 数据转换: 将请求消息进行转换，例如String转换为Integer
+        - 数据格式化: 例如将字符串转换为日期或数字
+        - 数据校验: 验证数据的有效性
+      - 控制器执行完成后，向DispatcherServlet返回一个ModelAndView对象
+      - 执行拦截器方法的postHandler()
+      - 依据ModelAndView(如果不存在异常的话，存在异常时执行异常处理器并跳转到相应页面)选择合适的视图解析器进行解析，根据Model和View渲染视图
+      - 渲染完成，执行拦截器的afterCompletion()
+      - 将渲染结果返回给客户端
