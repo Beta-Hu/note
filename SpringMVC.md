@@ -431,27 +431,36 @@
   ```java
   package indi.beta.config;
 
+  import indi.beta.interceptor.PageInterceptor;
   import org.springframework.context.annotation.Bean;
   import org.springframework.context.annotation.ComponentScan;
   import org.springframework.context.annotation.Configuration;
   import org.springframework.web.context.ContextLoader;
   import org.springframework.web.context.WebApplicationContext;
+  import org.springframework.web.multipart.MultipartResolver;
+  import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+  import org.springframework.web.servlet.HandlerExceptionResolver;
   import org.springframework.web.servlet.ViewResolver;
-  import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+  import org.springframework.web.servlet.config.annotation.*;
+  import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
   import org.thymeleaf.spring5.SpringTemplateEngine;
   import org.thymeleaf.spring5.view.ThymeleafViewResolver;
   import org.thymeleaf.templatemode.TemplateMode;
   import org.thymeleaf.templateresolver.ITemplateResolver;
   import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+  import java.util.List;
+  import java.util.Properties;
+
   @Configuration
   // 开启组件扫描
   @ComponentScan("indi.beta")
   // 开启mvc注解驱动
   @EnableWebMvc
-  public class WebConfig {
+  public class WebConfig implements WebMvcConfigurer {
       @Bean
       public ITemplateResolver templateResolver(){
+          // 配置模板解析器
           WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
           ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(
                   context.getServletContext());
@@ -465,6 +474,7 @@
 
       @Bean
       public SpringTemplateEngine templateEngine(ITemplateResolver templateResolver){
+          // 配置模板引擎
           SpringTemplateEngine templateEngine = new SpringTemplateEngine();
           templateEngine.setTemplateResolver(templateResolver);
           return templateEngine;
@@ -472,12 +482,51 @@
 
       @Bean
       public ViewResolver viewResolver(SpringTemplateEngine templateEngine){
+          // 配置视图解析器
           ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
           viewResolver.setCharacterEncoding("UTF-8");
           viewResolver.setTemplateEngine(templateEngine);
           return viewResolver;
       }
+
+      @Bean
+      public MultipartResolver fileUploadResolver(){
+          // 配置文件上传解析器
+          return new CommonsMultipartResolver();
+      }
+
+      @Override
+      public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) {
+          // 配置异常解析器
+          SimpleMappingExceptionResolver resolver = new SimpleMappingExceptionResolver();
+          Properties properties = new Properties();
+          // 添加一条错误映射规则
+          properties.setProperty("java.lang.ArithmeticException", "error");
+          resolver.setExceptionMappings(properties);
+          // 设置请求域获取错误信息的字段名。html通过该字段即可获取具体的错误信息
+          resolver.setExceptionAttribute("ex");
+          resolvers.add(resolver);
+      }
+
+      @Override
+      public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+          // 设置默认servlet可用
+          configurer.enable();
+      }
+
+      @Override
+      public void addInterceptors(InterceptorRegistry registry) {
+          // 添加拦截器并配置拦截规则
+          registry.addInterceptor(new PageInterceptor()).addPathPatterns("/**").excludePathPatterns("/");
+      }
+
+      @Override
+      public void addViewControllers(ViewControllerRegistry registry) {
+          // 添加视图控制器，并设置视图名称
+          registry.addViewController("/hello").setViewName("hello");
+      }
   }
+
   ```
 - 建立必要的页面控制器
   ```java
