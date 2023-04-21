@@ -384,3 +384,132 @@
   ```
   
 # 全注解开发SpringMVC
+- 新建WebInit类
+  ```java
+  package indi.beta.config;
+
+  import org.springframework.web.filter.CharacterEncodingFilter;
+  import org.springframework.web.filter.HiddenHttpMethodFilter;
+  import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
+  import javax.servlet.Filter;
+
+  // 用于代替web.xml
+  public class WebInit extends AbstractAnnotationConfigDispatcherServletInitializer {
+      @Override
+      protected Class<?>[] getRootConfigClasses() {
+          // 获取根配置，即Spring配置类
+          return new Class[]{SpringConfig.class};
+      }
+
+      @Override
+      protected Class<?>[] getServletConfigClasses() {
+          // 获取SpringMVC配置类
+          return new Class[]{WebConfig.class};
+      }
+
+      @Override
+      protected String[] getServletMappings() {
+          // 获取DispatcherServlet的url-pattern
+          return new String[]{"/"};
+      }
+
+      @Override
+      protected Filter[] getServletFilters() {
+          // 注册过滤器
+          CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
+          characterEncodingFilter.setEncoding("UTF-8");
+          characterEncodingFilter.setForceResponseEncoding(true);
+
+          HiddenHttpMethodFilter hiddenHttpMethodFilter = new HiddenHttpMethodFilter();
+          return new Filter[]{characterEncodingFilter, hiddenHttpMethodFilter};
+      }
+  }
+
+  ```
+- 新建SpringMVC配置类
+  ```java
+  package indi.beta.config;
+
+  import org.springframework.context.annotation.Bean;
+  import org.springframework.context.annotation.ComponentScan;
+  import org.springframework.context.annotation.Configuration;
+  import org.springframework.web.context.ContextLoader;
+  import org.springframework.web.context.WebApplicationContext;
+  import org.springframework.web.servlet.ViewResolver;
+  import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+  import org.thymeleaf.spring5.SpringTemplateEngine;
+  import org.thymeleaf.spring5.view.ThymeleafViewResolver;
+  import org.thymeleaf.templatemode.TemplateMode;
+  import org.thymeleaf.templateresolver.ITemplateResolver;
+  import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+
+  @Configuration
+  // 开启组件扫描
+  @ComponentScan("indi.beta")
+  // 开启mvc注解驱动
+  @EnableWebMvc
+  public class WebConfig {
+      @Bean
+      public ITemplateResolver templateResolver(){
+          WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
+          ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(
+                  context.getServletContext());
+
+          templateResolver.setCharacterEncoding("UTF-8");
+          templateResolver.setTemplateMode(TemplateMode.HTML);
+          templateResolver.setPrefix("/WEB-INF/pages/");
+          templateResolver.setSuffix(".html");
+          return templateResolver;
+      }
+
+      @Bean
+      public SpringTemplateEngine templateEngine(ITemplateResolver templateResolver){
+          SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+          templateEngine.setTemplateResolver(templateResolver);
+          return templateEngine;
+      }
+
+      @Bean
+      public ViewResolver viewResolver(SpringTemplateEngine templateEngine){
+          ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
+          viewResolver.setCharacterEncoding("UTF-8");
+          viewResolver.setTemplateEngine(templateEngine);
+          return viewResolver;
+      }
+  }
+  ```
+- 建立必要的页面控制器
+  ```java
+  package indi.beta.controller;
+
+  import org.springframework.stereotype.Controller;
+  import org.springframework.web.bind.annotation.RequestMapping;
+
+  @Controller
+  public class PageController {
+      @RequestMapping("/")
+      public String toPortal(){
+          return "portal";
+      }
+  }
+  ```
+- 注意
+  - 有时部署后会出现500错误，显示html资源找不到。此情况建议使用maven打包为war后，将tomcat里的部署从"工件"切换为打包的war
+  - 这一操作需要提前在pom中添加以下内容
+    ```xml
+        <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.2.0</version>
+
+                <configuration>
+                    <!-- 跳过web.xml进行打包，因为全注解开发将不会存在web.xml -->
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    ```
