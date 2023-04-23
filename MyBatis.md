@@ -1,1 +1,75 @@
-
+# 搭建MyBatis
+- 创建核心配置文件(可从MyBatis官方文档获取)
+  ```xml
+  <?xml version="1.0" encoding="UTF-8" ?>
+  <!-- 存在于MyBatis官方文档中 -->
+  <!DOCTYPE configuration
+          PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+          "https://mybatis.org/dtd/mybatis-3-config.dtd">
+  <configuration>
+      <environments default="development">
+          <environment id="development">
+              <transactionManager type="JDBC"/>
+              <!-- 数据源，即JDBC配置 -->
+              <dataSource type="POOLED">
+                  <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                  <property name="url" value="jdbc:mysql://10.16.109.227:3306/dbtest"/>
+                  <property name="username" value="root"/>
+                  <property name="password" value="0000"/>
+              </dataSource>
+          </environment>
+      </environments>
+      <!-- 配置映射文件 -->
+      <mappers>
+          <mapper resource="org/mybatis/example/BlogMapper.xml"/>
+      </mappers>
+  </configuration>
+  ```
+- 创建映射文件
+  - 映射文件: java对象与数据库对象之间映射关系。
+  - 一般来说，一张表对应了一个映射文件。推荐对每张表建立单独的mapper
+  - 两个一致
+    - 映射文件namespace与全类名必须一致
+    - 映射文件中SQL语句的id与mapper接口中的方法名一致
+  - 添加一条映射
+    ```xml
+    <?xml version="1.0" encoding="UTF-8" ?>
+    <!DOCTYPE mapper
+            PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+            "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    <mapper namespace="indi.beta.mapper.UserMapper">
+        <insert id="insertUser">
+            insert into t_table(id, name) values (3001, 'AlphaDog')
+        </insert>
+        <delete id="deleteUserById">
+            delete from t_table where id=3001
+        </delete>
+        <!-- 查询语句必须设置resultType或rsultMap属性，从而实现查询结果与java类的映射 -->
+        <select id="queryUserById" resultType="indi.beta.pojo.User">
+            select * from t_table where id=15
+        </select>
+    </mapper>
+  - 在mybatis配置中导入该映射
+  ```xml
+  <!-- 配置映射文件 -->
+  <mappers>
+      <mapper resource="mappers/UserMapper.xml"/>
+  </mappers>
+  ```
+- 执行
+  ```java
+  // 加载核心配置文件
+  InputStream resource = Resources.getResourceAsStream("mybatis-config.xml");
+  // 获取SqlSessionFactoryBuilder
+  SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
+  // 获取SqlSessionFactory
+  SqlSessionFactory factory = builder.build(resource);
+  // 获取SqlSession。可以为openSession提供参数true实现自动提交
+  SqlSession sqlSession = factory.openSession();
+  // 获取mapper接口对象
+  UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+  // 执行mapper中的方法
+  int result = mapper.insertUser();
+  sqlSession.commit();
+  System.out.println("Row affected: " + result);
+  ```
