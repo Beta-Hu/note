@@ -7,8 +7,16 @@
           PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
           "https://mybatis.org/dtd/mybatis-3-config.dtd">
   <configuration>
+      <!-- 核心配置文件中的标签是有序的，应当按顺序配置 -->
       <!-- 引入properties文件 -->
       <properties resource="jdbc.properties"/>
+      <typeAliases>
+          <!-- 配置别名，简化mapper.xml中的类名引用 -->
+          <!-- alias默认为类名，且不区分大小写 -->
+          <typeAlias type="indi.beta.pojo.User" alias="user"/>
+          <!-- 将某个软件包下所有类都使用其类名作为别名，用于类过多的情况 -->
+          <package name="indi.beta.pojo"/>
+      </typeAliases>
       <environments default="development">
           <environment id="development">
               <!-- transactionManager: JDBC(原生的事务管理方式，手动提交) | MANAGED -->
@@ -58,6 +66,8 @@
   <!-- 配置映射文件 -->
   <mappers>
       <mapper resource="mappers/UserMapper.xml"/>
+      <!-- 将目录下所有mapper.xml全部导入，要求被导入的xml包名与对应的接口类包名相同，且文件名(不含后缀)相同 -->
+      <package name="indi.beta.mapper"/>
   </mappers>
   ```
 - 执行
