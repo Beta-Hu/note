@@ -87,3 +87,25 @@
   sqlSession.commit();
   System.out.println("Row affected: " + result);
   ```
+
+# MyBatis获取参数
+- 通过#{}或${}获取单个参数
+  ```xml
+  <!-- User queryUserById(int id) -->
+  <select id="queryUserById" resultType="user">
+      select * from t_table where id=#{id}
+  </select>
+  ```
+  - _#{}与其中包括的变量名无关，但不能缺省。推荐设置为方法的参数名_
+  - _字面量为字符串时，应当使用单引号将${}包裹起来_
+  - _获取单个字面量时，${}与#{}时等效的_
+- 获取多个参数
+  ```xml
+  <!-- User queryUserById(int id) -->
+  <select id="checkUser" resultType="user">
+      select * from t_table where id=#{arg0} and name=#{arg1}
+  </select>
+  ```
+  - _使用arg作为键时，从0开始。使用param作为键时，从1开始。二者可以混用，但不推荐_
+  - _键的创建是自动的_
+  - _也可以使用${},依然需要注意字符串拼接问题_
