@@ -7,15 +7,18 @@
           PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
           "https://mybatis.org/dtd/mybatis-3-config.dtd">
   <configuration>
+      <!-- 引入properties文件 -->
+      <properties resource="jdbc.properties"/>
       <environments default="development">
           <environment id="development">
+              <!-- transactionManager: JDBC(原生的事务管理方式，手动提交) | MANAGED -->
               <transactionManager type="JDBC"/>
-              <!-- 数据源，即JDBC配置 -->
+              <!-- dataSource: POOLED(使用连接池) | UNPOOLED(不使用连接池) | JNDI(使用上下文数据源) -->
               <dataSource type="POOLED">
-                  <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
-                  <property name="url" value="jdbc:mysql://10.16.109.227:3306/dbtest"/>
-                  <property name="username" value="root"/>
-                  <property name="password" value="0000"/>
+                  <property name="driver" value="${jdbc.driver}"/>
+                  <property name="url" value="${jdbc.url}"/>
+                  <property name="username" value="${jdbc.username}"/>
+                  <property name="password" value="${jdbc.password}"/>
               </dataSource>
           </environment>
       </environments>
@@ -45,6 +48,7 @@
             delete from t_table where id=3001
         </delete>
         <!-- 查询语句必须设置resultType或rsultMap属性，从而实现查询结果与java类的映射 -->
+        <!-- resultType用于数据表字段与java类属性一致的情况，resultMap用于不一致的情况 -->
         <select id="queryUserById" resultType="indi.beta.pojo.User">
             select * from t_table where id=15
         </select>
