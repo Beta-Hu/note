@@ -99,7 +99,7 @@
   - _#{}与其中包括的变量名无关，但不能缺省。推荐设置为方法的参数名_
   - _字面量为字符串时，应当使用单引号将${}包裹起来_
   - _获取单个字面量时，${}与#{}时等效的_
-- 获取多个参数
+- 获取多个参数(自动)
   ```xml
   <!-- User queryUserById(int id) -->
   <select id="checkUser" resultType="user">
@@ -109,3 +109,22 @@
   - _使用arg作为键时，从0开始。使用param作为键时，从1开始。二者可以混用，但不推荐_
   - _键的创建是自动的_
   - _也可以使用${},依然需要注意字符串拼接问题_
+- 获取多个参数(手动)
+  ```xml
+  <!-- User queryUserById(int id, String name) -->
+  <select id="checkUser" resultType="user">
+      select * from t_table where id=#{my_key_1} and name=#{my_key_2}
+  </select>
+  ```
+  - _将方法的参数类型设置为Map，并将键设置为字符串_
+  - _在mapper.xml中使用自定义的键即可访问_
+- 获取实体类对象
+  ```xml
+  <!-- User insertUser(User user) -->
+  <!-- User {int id; String name;} -->
+  <select id="checkUser" resultType="user">
+      select * from t_table where id=#{id} and name=#{name}
+  </select>
+  ```
+  - _直接使用实体类的属性进行访问_
+  - **_需要提供getter和setter_**
