@@ -128,3 +128,11 @@
   ```
   - _直接使用实体类的属性进行访问_
   - **_需要提供getter和setter_**
+-使用@Param注解为变量赋键
+  ```xml
+  <!-- User checkUser(@Param("userId") int id, @Param("UserName") String name); -->
+  <select id="checkUser" resultType="user">
+      select * from t_table where id=#{userId} and name=#{userName}
+  </select>
+  ```
+  - _即使使用了@Param注解，依然可以使用param作为键来获取参数_
