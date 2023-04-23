@@ -118,7 +118,7 @@
   ```
   - _将方法的参数类型设置为Map，并将键设置为字符串_
   - _在mapper.xml中使用自定义的键即可访问_
-- 获取实体类对象
+- 获取实体类对象(推荐)
   ```xml
   <!-- User insertUser(User user) -->
   <!-- User {int id; String name;} -->
@@ -128,7 +128,7 @@
   ```
   - _直接使用实体类的属性进行访问_
   - **_需要提供getter和setter_**
--使用@Param注解为变量赋键
+-使用@Param注解为变量赋键(推荐)
   ```xml
   <!-- User checkUser(@Param("userId") int id, @Param("UserName") String name); -->
   <select id="checkUser" resultType="user">
