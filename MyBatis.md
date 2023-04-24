@@ -242,6 +242,7 @@
   </select>
 
   <resultMap id="simplifiedEmployeeMap" type="simplifiedEmployee">
+      <!-- SimplifiedEmployee包含id name jobHistory属性，其中jobHistory为JobHistory对象 -->
       <id property="id" column="eid"/>
       <result property="name" column="name"/>
       <result property="jobHistory.employeeId" column="j_e_id"/>
