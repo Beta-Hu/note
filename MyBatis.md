@@ -199,3 +199,35 @@
   ```
   - 利用java传引用的特性，传入的参数不需要设置id，而会通过mybatis自动将其值设置为自增主键值
   - 通过java语句可以查看user被赋予的id
+
+# 映射关系: 解决字段名与属性名不一致问题
+- 使用字段别名
+  - _当字段名与属性名不一致时，该属性无法被赋值，因此最终结果为null_
+  - 通过将sql字段设置与属性名一致的别名可以解决该问题
+- 通过核心配置文件中的setting进行配置(官方的下划线转驼峰)
+  ```xml
+  <settings>
+      <setting name="mapUnderscoreToCamelCase" value="true"/>
+  </settings>
+  - _**要求属性名与字段名必须对应，除了命名规则导致的不一致外**_
+- 通过resultMap
+  ```xml
+  <!-- 配置映射规则 -->
+  <resultMap id="empResultMap" type="employee">
+      <id property="employeeId" column="employee_id"/>
+      <result property="firstName" column="first_name"/>
+      <result property="lastName" column="last_name"/>
+      <result property="email" column="email"/>
+      <result property="phoneNumber" column="phone_number"/>
+      <result property="hireDate" column="hire_date"/>
+      <result property="jobId" column="job_id"/>
+      <result property="salary" column="salary"/>
+      <result property="commissionPct" column="commission_pct"/>
+      <result property="managerId" column="manager_id"/>
+      <result property="departmentId" column="department_id"/>
+  </resultMap>
+  <!-- 使用resultMap代替resultType进行映射 -->
+  <select id="getEmployeeById" resultMap="empResultMap">
+      select * from employees where employee_id=#{id}
+  </select>
+  ```
