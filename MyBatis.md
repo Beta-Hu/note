@@ -213,6 +213,7 @@
 - 通过resultMap
   ```xml
   <!-- 配置映射规则 -->
+  <!-- type为数据库对应的java类的全类名或alias -->
   <resultMap id="empResultMap" type="employee">
       <!-- id用于配置主键映射 -->
       <!-- propertu为属性名，column为字段名 -->
