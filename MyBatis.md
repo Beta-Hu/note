@@ -235,7 +235,7 @@
       select * from employees where employee_id=#{id}
   </select>
   ```
-- 解决多对一的映射关系: 级联赋值
+- 解决多对一(多个字段对应1个属性)的映射关系: 级联赋值
   ```xml
   <select id="getEmployeeWithJobHistoryById" resultMap="simplifiedEmployeeMap">
       select e.employee_id e_id, concat(e.first_name, e.last_name) name, j.employee_id j_e_id, j.start_date j_s_date, j.end_date j_e_date, j.job_id j_j_id, j.department_id j_d_id from employees e right join job_history j on e.employee_id = j.employee_id where e.employee_id=#{id};
@@ -252,7 +252,7 @@
       <result property="jobHistory.departmentId" column="j_d_id"/>
   </resultMap>
   ```
-- 解决多对一的映射关系: association
+- 解决多对一(多个字段对应1个属性)的映射关系: association
   ```xml
 <select id="getEmployeeWithJobHistoryById" resultMap="simplifiedEmployeeMap">
       select e.employee_id e_id, concat(e.first_name, e.last_name) name, j.employee_id j_e_id, j.start_date j_s_date, j.end_date j_e_date, j.job_id j_j_id, j.department_id j_d_id from employees e right join job_history j on e.employee_id = j.employee_id where e.employee_id=#{id};
