@@ -214,7 +214,10 @@
   ```xml
   <!-- 配置映射规则 -->
   <resultMap id="empResultMap" type="employee">
+      <!-- id用于配置主键映射 -->
+      <!-- propertu为属性名，column为字段名 -->
       <id property="employeeId" column="employee_id"/>
+      <!-- result用于配置非主键映射 -->
       <result property="firstName" column="first_name"/>
       <result property="lastName" column="last_name"/>
       <result property="email" column="email"/>
