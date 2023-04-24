@@ -99,6 +99,9 @@
   - _#{}与其中包括的变量名无关，但不能缺省。推荐设置为方法的参数名_
   - _字面量为字符串时，应当使用单引号将${}包裹起来_
   - _获取单个字面量时，${}与#{}时等效的_
+  - _${}的底层实现是字符串拼接，#{}底层实现是占位符赋值。${}可能出现sql注入_
+  - _#{}会被替换为?，如果sql中本身就含有sql，则会产生冲突_
+  - _#{}会自动将值的左右两侧添加单引号，这是很多问题的根源_
 - 获取多个参数(自动)
   ```xml
   <!-- User queryUserById(int id) -->
@@ -136,3 +139,63 @@
   </select>
   ```
   - _即使使用了@Param注解，依然可以使用param作为键来获取参数_
+
+# 各种查询
+- 聚合函数
+  - sql中的聚合函数在mybatis中依然是可用的，只是需要将resultType指定为相应的返回值类型
+- 将结果返回为Map集合
+  ```xml
+  <!-- Map<String, Objects> getUserByIdToMap(int id);-->
+  <select id="getUserByIdToMap" resultType="Map">
+      select * from t_table where id=#{id}
+  </select>
+  ```
+  - _返回值的键为字段名，返回值的值为属性值_
+  - _**返回记录有多条时，需要将方法返回值类型改为List<Map<String, Objects>>**_
+  - _返回记录有多条时，可以在mapper方法前通过@MapKey注解将某个字段设置为键_
+- 模糊查询
+  - 由于#{}采用的是占位符赋值方式，在解析时首先被替换为?。在模糊查询中，该?会出现在字符串中，被认为是字符串的一部分，导致占位符无法被赋值
+  - 解决方案1: 采用${}替换#{}
+    ```xml
+    <!-- List<User> getUserByLike(String name);-->
+    <select id="getUserByLike" resultType="user">
+        select * from t_table where name like '${name}%'
+    </select>
+    ```
+  - 解决方案2: 采用sql的concat函数进行拼接
+    ```xml
+    <!-- List<User> getUserByLike(String name);-->
+    <select id="getUserByLike" resultType="user">
+        select * from t_table where name like concat(#{name}, '%')
+    </select>
+    ```xml
+  - 解决方案3: 采用双引号将模糊符号包裹起来
+    ```xml
+    <!-- List<User> getUserByLike(String name);-->
+    <select id="getUserByLike" resultType="user">
+        select * from t_table where name like #{name}"%"
+    </select>
+    ```
+- 批量删除
+  ```xml
+  <!-- int batchDelete(String ids);-->
+  <delete id="batchDelete">
+      delete from t_table where id in (${ids})
+  </delete>
+  ```
+  - _此时不能使用#{}, 因为它会将多个值拼接为1个字符串，导致sql总是找不到匹配的记录。当条件字段是数值型时，会报数值转换异常_
+- 动态表名
+  ```xml
+  select * from ${t_name}
+  ```
+  - 动态表名只能使用${}，因为表名不能为字符串，而#{}会自动添加单引号
+- 添加时获取自增主键
+  - 由于insert的返回值是受影响行数，因此只能需要考虑将主键值通过mapper方法的参数传递出来
+  ```xml
+  <!-- void insertUserReturnAutoIncrementKey(User user);-->
+  <insert id="insertUserReturnAutoIncrementKey" useGeneratedKeys="true" keyProperty="id">
+      insert into t_table values(null, #{name})
+  </insert>
+  ```
+  - 利用java传引用的特性，传入的参数不需要设置id，而会通过mybatis自动将其值设置为自增主键值
+  - 通过java语句可以查看user被赋予的id
