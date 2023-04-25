@@ -363,3 +363,21 @@
       <result property="name" column="name"/>
   </resultMap>
   ```
+
+# 动态SQL
+- if
+  ```xml
+  <!-- List<SimplifiedEmployee> getEmployeeByCondition(SimplifiedEmployee employee);-->
+  <select id="getEmployeeByCondition" resultType="simplifiedEmployee">
+      select employee_id id, concat(first_name, ' ', last_name) name, department_id from employees where 1=1
+      <if test="id != null">
+          employee_id=#{id}
+      </if>
+      <if test="departmentId != null">
+          and department_id=#{departmentId}
+      </if>
+  </select>
+  ```
+  - if用于自适应添加条件
+  - 1=1是恒成立条件，用于避免第一个if不满足时导致的"where and"语法错误
+  - if中的属性来自于mapper方法的形参的属性
