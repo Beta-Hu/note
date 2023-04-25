@@ -442,3 +442,26 @@
   - 必须使用where进行包裹，否则会出现sql语句中where的缺失
   - 当有条件满足时，后续的所有条件都不再执行，也不会添加到sql中
 - foreach
+  ```xml
+  <delete id="deleteBatchEmployee">
+      delete from t_table where id in 
+      <foreach collection="eidList" item="eid" separator="," open="(" close=")">
+          #{eid}
+      </foreach>
+  </delete>
+  ```
+  ```xml
+  <insert id="insertBatchEmployee">
+      insert into t_table values
+      <foreach collection="employees" item="employee" separator=",">
+          (null, #{employee.name})
+      </foreach>
+  </insert>
+  ```
+  - seperator: 设置分隔符，前后会自动添加空格
+  - open: 设置左侧开始符号
+  - close: 设置右侧关闭符号
+  - collection: 集合名称
+  - item: 集合中每次迭代的变量的临时名称
+  - foreach会自动添加占位符"?"
+  - _**对于insert，不应当设置open="(" close=")"，该操作是针对整体的，会导致sql语法错误。括号应当在foreach内部手动添加**_
