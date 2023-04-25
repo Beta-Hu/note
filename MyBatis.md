@@ -399,3 +399,46 @@
   - where标签中有为真的条件时，自动在sql中追加where条件；否则不会生成where
   - where标签可以自适应删除条件连接符，例如and or，不需要再使用1=1
   - where不能将内容后的and or去除，因此十分不推荐将and或or写在if的末尾
+- trim
+  ```xml
+  <!-- List<SimplifiedEmployee> getEmployeeByCondition(SimplifiedEmployee employee);-->
+  <select id="getEmployeeByCondition" resultType="simplifiedEmployee">
+      select employee_id id, concat(first_name, ' ', last_name) name, department_id from employees
+      <trim prefix="where" suffix="" prefixOverrides="and|or" suffixOverrides="and|or">
+          <if test="id != null">
+              employee_id=#{id}
+          </if>
+          <if test="departmentId != null">
+              and department_id=#{departmentId}
+          </if>
+      </trim>
+  </select>
+  ```
+  - 自动追加where，自动删除特定的开头或结尾
+  - trim只会在内部存在内容时才会生效
+  - prefixOverrides和suffixOverrides用于删除，多个值时使用"|"隔开即可
+  - prefix和suffix用于添加
+- choose when otherwise
+  ```xml
+  <!-- List<SimplifiedEmployee> getEmployeeByCondition(SimplifiedEmployee employee);-->
+  <select id="getEmployeeByCondition" resultType="simplifiedEmployee">
+      select employee_id id, concat(first_name, ' ', last_name) name, department_id from employees
+      <where>
+          <choose>
+              <when test="id != null and id != '' and id != 0">
+                  employee_id=#{id}
+              </when>
+              <when test="departmentId != null and departmentId != 0">
+                  department_id=#{departmentId}
+              </when>
+              <otherwise>
+                  name=#{name}
+              </otherwise>
+          </choose>
+      </where>
+  </select>
+  ```
+  - choose when otherwise相当于java的if-else结构
+  - 必须使用where进行包裹，否则会出现sql语句中where的缺失
+  - 当有条件满足时，后续的所有条件都不再执行，也不会添加到sql中
+- foreach
