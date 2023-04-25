@@ -291,3 +291,8 @@
       select * from departments where department_id=#{did}
   </select>
   ```
+  - 延迟加载。如无必要，不执行子查询，从而提升查询效率
+  ```xml
+  <setting name="lazyLoadingEnabled" value="true"/>
+  ```
+    - _可通过association的属性fetchType="eager"单独设置某个子查询为非延迟加载_
