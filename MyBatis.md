@@ -285,7 +285,7 @@
       <association property="department" select="indi.beta.mapper.DepartmentMapper.getDepartmentById" column="department_id"/>
   </resultMap>
   ```
-  - 建立第二个查询，将第一个查询中缺少的字段查询出来
+  - 建立第二个查询(子查询)，将第一个查询中缺少的字段查询出来
   ```xml
   <select id="getDepartmentById" resultType="department">
       select * from departments where department_id=#{did}
