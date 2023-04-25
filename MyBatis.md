@@ -514,3 +514,21 @@
   List<Employee> employees = mapper.selectByExample(example);
   ```
 - xxSelective方法与对应的非Selective方法的区别在于，前者将会避免修改类属性为null的字段，而后者将会把对应字段设置为null
+
+# 自动分页
+- 依赖
+  ```xml
+  <dependency>
+      <groupId>com.github.pagehelper</groupId>
+      <artifactId>pagehelper</artifactId>
+      <version>5.2.0</version>
+  </dependency>
+  ```
+- 使用
+  ```java
+  EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+  Page<Object> page = PageHelper.startPage(1, 5);   // 开启分页(当前页数，页面条目数)
+  List<Employee> employees = mapper.selectByExample(null);
+  PageInfo<Employee> pageInfo = new PageInfo<>(employees, 7);   // 获取分页信息(分页数据，当前导航分页的数量)
+  ```
+  - pageInfo提供了众多属性，能够极大地简化浏览器页面中超链接的设置
