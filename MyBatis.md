@@ -271,3 +271,23 @@
   </resultMap>
   ```
 - 解决多对一(多个字段对应1个属性)的映射关系: 分步查询
+  - 建立第一个查询，获取第二个查询所需要的关键字
+  ```xml
+  <!-- SimplifiedEmployee getEmployeeWithDepartment(@Param("eid") int id);-->
+  <select id="getEmployeeWithDepartment" resultMap="employeeWithDepartmentMap">
+      select employee_id, concat(first_name, ' ', last_name) name, department_id from employees where employee_id=#{eid}
+  </select>
+  <resultMap id="employeeWithDepartmentMap" type="simplifiedEmployee">
+      <id property="id" column="employee_id"/>
+      <result property="name" column="name"/>
+      <!-- Department getDepartmentById(@Param("did") int id);-->
+      <!-- association中的column是连接条件，select是子查询对应的mapper方法的全路径 -->
+      <association property="department" select="indi.beta.mapper.DepartmentMapper.getDepartmentById" column="department_id"/>
+  </resultMap>
+  ```
+  - 建立第二个查询，将第一个查询中缺少的字段查询出来
+  ```xml
+  <select id="getDepartmentById" resultType="department">
+      select * from departments where department_id=#{did}
+  </select>
+  ```
