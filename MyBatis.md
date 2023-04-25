@@ -381,3 +381,21 @@
   - if用于自适应添加条件
   - 1=1是恒成立条件，用于避免第一个if不满足时导致的"where and"语法错误
   - if中的属性来自于mapper方法的形参的属性
+- where
+  ```xml
+  <!-- List<SimplifiedEmployee> getEmployeeByCondition(SimplifiedEmployee employee);-->
+  <select id="getEmployeeByCondition" resultType="simplifiedEmployee">
+      select employee_id id, concat(first_name, ' ', last_name) name, department_id from employees
+      <where>
+          <if test="id != null">
+              employee_id=#{id}
+          </if>
+          <if test="departmentId != null">
+              and department_id=#{departmentId}
+          </if>
+      </where>
+  </select>
+  ```
+  - where标签中有为真的条件时，自动在sql中追加where条件；否则不会生成where
+  - where标签可以自适应删除条件连接符，例如and or，不需要再使用1=1
+  - where不能将内容后的and or去除，因此十分不推荐将and或or写在if的末尾
