@@ -465,3 +465,15 @@
   - item: 集合中每次迭代的变量的临时名称
   - foreach会自动添加占位符"?"
   - _**对于insert，不应当设置open="(" close=")"，该操作是针对整体的，会导致sql语法错误。括号应当在foreach内部手动添加**_
+- sql
+  ```xml
+  <sql id="empWithDept">employee_id, concat(first_name, ' ', last_name) name, department_id</sql>
+  ```
+  - 将常用的查询字段进行提取，并使用别名进行替代
+  ```xml
+  <select id="getEmployeeWithDepartment" resultMap="employeeWithDepartmentMap">
+      select <include refid="empWithDept"/> from employees where employee_id=#{eid}
+  </select>
+  ```
+  - 在需要引用的地方使用使用别名代替复杂的字段
+  
