@@ -503,3 +503,14 @@
 - 缓存查询的顺序: 
   - **优先查询二级缓存，找不到则查询一级缓存，依然没有找到则查询数据库**
   - SqlSession关闭后，一级缓存的数据会写入二级缓存
+
+# MyBatis逆向工程
+- _逆向工程旨在通过数据表生成对应的mapper、实体类、mapper.xml_
+- 逆向工程会生成相应的Example类，在其中提供了针对每个字段的条件。通过new Example()创建条件并提供给selectByExample方法即可实现条件查询
+  ```java
+  EmployeeExample example = new EmployeeExample();
+  example.createCriteria().andSalaryBetween(3000.0, 3200.0);
+  example.or().andSalaryBetween(6000.0, 6200.0);
+  List<Employee> employees = mapper.selectByExample(example);
+  ```
+- xxSelective方法与对应的非Selective方法的区别在于，前者将会避免修改类属性为null的字段，而后者将会把对应字段设置为null
