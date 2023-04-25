@@ -296,3 +296,46 @@
   <setting name="lazyLoadingEnabled" value="true"/>
   ```
     - _可通过association的属性fetchType="eager"单独设置某个子查询为非延迟加载_
+- 解决一对多查询(某个属性的查询结果为多条记录): collection
+  ```xml
+  <select id="getDepartmentWithEmpById" resultMap="getDepartmentWithEmpByIdMap">
+      select * from departments d left join employees e on d.department_id=e.department_id where d.department_id=#{did}
+  </select>
+  <resultMap id="getDepartmentWithEmpByIdMap" type="department">
+      <id property="departmentId" column="department_id"/>
+      <result property="departmentName" column="department_name"/>
+      <result property="managerId" column="manager_id"/>
+      <result property="locationId" column="location_id"/>
+      <!-- 设置属性的属性名以及对应的java类。employees是department下的一个list集合 -->
+      <collection property="employees" ofType="simplifiedEmployee">
+          <id property="id" column="employee_id"/>
+          <result property="name" column="first_name"/>
+      </collection>
+  </resultMap>
+  ```
+- 解决一对多查询(某个属性的查询结果为多条记录): 分步查询
+  - 主查询 
+  ```xml
+  <select id="getDepartmentWithEmpById" resultMap="getDepartmentWithEmpByIdMap">
+      select * from departments where department_id=#{did}
+  </select>
+  <resultMap id="getDepartmentWithEmpByIdMap" type="department">
+      <id property="departmentId" column="department_id"/>
+      <result property="departmentName" column="department_name"/>
+      <result property="managerId" column="manager_id"/>
+      <result property="locationId" column="location_id"/>
+      <collection property="employees"
+                  select="indi.beta.mapper.SimplifiedEmployeeMapper.getEmployeeOfDepartment"
+                  column="department_id"/>
+  </resultMap>
+  ```
+  - 子查询
+  ```xml
+  <select id="getEmployeeOfDepartment" resultMap="employeeMap">
+      select employee_id id, concat(first_name, last_name) name, department_id from employees where department_id=#{did}
+  </select>
+  <resultMap id="employeeMap" type="simplifiedEmployee">
+      <id property="id" column="id"/>
+      <result property="name" column="name"/>
+  </resultMap>
+  ```
