@@ -74,9 +74,27 @@
       address:
        - bj
        - sh
+      addr: [bg, xz]
       ```
     - 纯量
       ```yml
       msg1: 'dadsadada' # 忽略转义字符
       msg2: "dadsada"   # 识别转义字符
       ```
+  - 参数引用
+    ```yml
+    name: dra
+    person:
+      name: ${name}
+    ```
+  - 读取配置文件内容
+    - @Value注入
+      ```java
+      @Value("${name}")
+      private String name;
+
+      @Value("${addr[0]}")  // 访问数组的元素
+      private String addr;
+      ```
+    - Environment
+    - @Configuration
