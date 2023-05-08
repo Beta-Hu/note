@@ -97,4 +97,23 @@
       private String addr;
       ```
     - Environment
+      ```java
+      @Autowired
+      private Environment env;
+      
+      env.getProperty("name")
+      ```
     - @Configuration
+      ```java
+      @Component
+      @ConfigurationProperties(prefix = "user")
+      public class User {
+        private String name;
+        private int age;
+        
+        // getters
+        // setters
+        
+        // 必须要保留空参构造器
+      }
+      ```
