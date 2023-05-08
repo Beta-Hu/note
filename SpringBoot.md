@@ -142,3 +142,65 @@
     - 命令行参数
     - 命令行指定外部配置文件
     - jar同级目录下的配置文件(config/*.yml或*.yml)
+
+# springboot整合其他框架
+- JUnit
+  - 搭建springboot工程
+  - 引入starter-test起步依赖
+    ```xml
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+    ```
+  - 编写测试类
+    ```java
+    @RunWith(SpringRunner.class)
+    @SpringBootTest(classes = MyApplication.class)
+    public class UserTest {
+        @Autowired
+        private UserService service;
+
+        @Test   // org.junit.Test
+        public void test(){
+            service.add();
+        }
+    }
+    ```
+- Redis
+  - ...
+- MyBatis
+  - 搭建springboot工程
+  - 引入mybatis起步依赖，添加mysql驱动
+    ```xml
+    <dependency>
+        <groupId>org.mybatis.spring.boot</groupId>
+        <artifactId>mybatis-spring-boot-starter</artifactId>
+        <version>2.1.3</version>
+    </dependency>
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>8.0.32</version>
+    </dependency>
+    ```
+  - 编写DataSource和MyBatis相关配置
+    ```yml
+    spring:
+      datasource:
+        url: jdbc:mysql://localhost:3306/dbtest
+        username: root
+        password: '0000'  # 密码必须要使用单引号包含
+        driver-class-name: com.mysql.cj.jdbc.Driver
+    ```
+  - 定义表和实体类
+  - 编写DAO和mapper
+    ```java
+    @Mapper
+    public interface UserMapper {
+        @Select("select * from t_table")
+        List<User> getUserById();
+    }
+    ```
+    - _实测引导类加不加@MapperScan("")对mapper的自动注入没有影响_
