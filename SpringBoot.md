@@ -107,6 +107,7 @@
       ```java
       @Component
       @ConfigurationProperties(prefix = "user")
+      // 类名最好不要与系统用户名相同，否则会出现获取属性值始终为系统用户名的问题
       public class User {
         private String name;
         private int age;
