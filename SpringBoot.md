@@ -77,6 +77,6 @@
       ```
     - 纯量
       ```yml
-      msg1: 'dadsadada'
-      msg2: "dadsada"
+      msg1: 'dadsadada' # 忽略转义字符
+      msg2: "dadsada"   # 识别转义字符
       ```
