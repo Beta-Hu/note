@@ -133,8 +133,8 @@
       ```
       -Dspring.profile.active=test
       ```
-  - 内部配置加载顺序
-    - 当前项目下的config目录
-    - 当前项目的根目录
-    - classpath下的config
-    - classpath的根目录
+  - 内部配置加载顺序(优先级由高到低，同名属性以高优先级为准)
+    - 当前项目下的config目录(%paren%/config/*.yml)
+    - 当前项目的根目录(%parent%/*.yml)
+    - classpath下的config(resources/config/*.yml)
+    - classpath的根目录(resources/*.yml)
