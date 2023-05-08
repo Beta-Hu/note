@@ -118,4 +118,14 @@
         // 必须要保留空参构造器
       }
       ```
-  - profile
+  - profile: 用于多个环境下的参数切换(dev/test/prod)
+    - 通过profile参数
+      ```yaml
+      spring:
+        profiles:
+          active: test
+      ```
+    - 通过虚拟机参数
+      ```
+      java xxx.jar --spring.profile.active=test
+      ```
