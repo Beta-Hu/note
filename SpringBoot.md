@@ -138,3 +138,7 @@
     - 当前项目的根目录(%parent%/*.yml)
     - classpath下的config(resources/config/*.yml)
     - classpath的根目录(resources/*.yml)
+  - 外部配置加载顺序(常用的。优先级由高到低，同名属性以高优先级为准)
+    - 命令行参数
+    - 命令行指定外部配置文件
+    - jar同级目录下的配置文件(config/*.yml或*.yml)
