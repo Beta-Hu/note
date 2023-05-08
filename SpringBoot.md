@@ -133,3 +133,8 @@
       ```
       -Dspring.profile.active=test
       ```
+  - 内部配置加载顺序
+    - 当前项目下的config目录
+    - 当前项目的根目录
+    - classpath下的config
+    - classpath的根目录
