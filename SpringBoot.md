@@ -125,7 +125,11 @@
         profiles:
           active: test
       ```
-    - 通过虚拟机参数
+    - 通过命令行参数
       ```
       java xxx.jar --spring.profile.active=test
+      ```
+    - 通过虚拟机参数
+      ```
+      -Dspring.profile.active=test
       ```
