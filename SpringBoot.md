@@ -240,3 +240,11 @@
   - 实现CommandLineRunner
     - 不需要注册，项目启动后自动执行
   
+- 监控Actuator
+  - 导入依赖
+   ```html
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+   ```
