@@ -277,3 +277,4 @@
       - 指定server地址: spring.boot.admin.client.url=http://xx.xx.xx.xx:xxxx
       - 显示健康详情: management.endpoint.health.show-details=always
       - 始终暴露的信息: management.endpoints.exposure.include='*'
+    - 通过浏览器访问http://xx.xx.xx.xx:xxxx
