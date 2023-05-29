@@ -248,3 +248,20 @@
         <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
    ```
+- 监控SpringbootAdmin
+  - admin-server
+    - 引入依赖
+    ```html
+    <dependency>
+        <groupId>de.codecentric</groupId>
+        <artifactId>spring-boot-admin-starter-server</artifactId>
+        <version>2.1.5</version>
+    </dependency>
+    ```
+    - 开启服务@EnableAdminServer
+    ```java
+    @EnableAdminServer
+    @SpringBootApplication
+    public class SpringbootSeverApplication{...}
+    ```
+  - admin-client
