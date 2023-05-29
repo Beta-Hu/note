@@ -265,3 +265,15 @@
     public class SpringbootSeverApplication{...}
     ```
   - admin-client
+    - 引入依赖
+    ```html
+    <dependency>
+        <groupId>de.codecentric</groupId>
+        <artifactId>spring-boot-admin-starter-client</artifactId>
+        <version>2.1.5</version>
+    </dependency>
+    ```
+    - 添加配置
+      - 指定server地址: spring.boot.admin.client.url=http://xx.xx.xx.xx:xxxx
+      - 显示健康详情: management.endpoint.health.show-details=always
+      - 始终暴露的信息: management.endpoints.exposure.include='*'
