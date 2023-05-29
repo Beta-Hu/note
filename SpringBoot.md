@@ -217,4 +217,12 @@
     - spring-boot-stater-netty
     - spring-boot-stater-tomcat (默认的，自动导入)
     - spring-boot-stater-undertow
-  - 切换为其他服务器时，需要在org.springframework.boot中排除tomcat依赖
+  - 切换为其他服务器时，需要在spring-boot-starter-web中排除tomcat依赖
+    ```html
+    <exclusions>
+        <exclusion>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+        </exclusion>
+    </exclusions>
+    ```
