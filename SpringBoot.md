@@ -204,3 +204,17 @@
     }
     ```
     - _实测引导类加不加@MapperScan("")对mapper的自动注入没有影响_
+
+# SpringBoot高级
+- 自定义条件类
+  - 用于实现 在一定条件下创建bean。
+  - 需要实现Condition接口，重写matches方法。matches返回为true时创建bean
+    - 参数context：上下文对象。用于获取属性值、类加载器、BeanFactory等
+    - 参数metadata：元数据对象。获取注解属性
+- 更换内置Web服务器
+  - 通过导入不同的坐标即可实现切换
+    - spring-boot-stater-jetty
+    - spring-boot-stater-netty
+    - spring-boot-stater-tomcat (默认的，自动导入)
+    - spring-boot-stater-undertow
+  - 切换为其他服务器时，需要在org.springframework.boot中排除tomcat依赖
