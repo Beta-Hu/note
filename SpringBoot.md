@@ -226,3 +226,17 @@
         </exclusion>
     </exclusions>
     ```
+- Enable\*注解
+- 监听机制
+  - 实现ApplicationContextInitializer
+    - 需要在META-INF/spring.factories中注册
+      - org.springframework.context.ApplicationContextInitializer=XXXXXX(自定义的监听器全路径名)
+  - 实现SpringApplicationRunListener
+    - 需要声明参数为SpringApplecation 和 String[] 的构造器
+    - 需要在META-INF/spring.factories中注册
+      - org.springframework.context.SpringApplicationRunListener=XXXXXX(自定义的监听器全路径名)
+  - 实现ApplicationRunner
+    - 不需要注册，项目启动后自动执行
+  - 实现CommandLineRunner
+    - 不需要注册，项目启动后自动执行
+  
